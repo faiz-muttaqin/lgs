@@ -78,7 +78,7 @@ const ThemeControls = () => {
 
   return (
     <div className="flex gap-1">
-      <ThemeToggle  variant="ghost" size="icon" className="size-6 p-1" />
+      <ThemeToggle variant="ghost" size="icon" className="size-6 p-1" />
 
       <TooltipWrapper label="Random theme" asChild>
         <Button variant="ghost" size="sm" className="size-6 p-1" onClick={randomize}>
@@ -212,11 +212,11 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
       search.trim() === ""
         ? presetNames
         : presetNames.filter((name) => {
-            if (name === "default") {
-              return "default".toLowerCase().includes(search.toLowerCase());
-            }
-            return presets[name]?.label?.toLowerCase().includes(search.toLowerCase());
-          });
+          if (name === "default") {
+            return "default".toLowerCase().includes(search.toLowerCase());
+          }
+          return presets[name]?.label?.toLowerCase().includes(search.toLowerCase());
+        });
 
     // Separate saved and default themes
     const savedThemesList = filteredList.filter((name) => name !== "default" && isSavedTheme(name));
@@ -249,75 +249,76 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
 
   return (
     <div className="flex w-full items-center">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn("group relative w-full justify-between md:min-w-56", className)}
-            {...props}
-          >
-            <div className="flex w-full items-center gap-3 overflow-hidden">
-              <div className="flex gap-0.5">
-                <ColorBox color={themeState.styles[mode].primary} />
-                <ColorBox color={themeState.styles[mode].accent} />
-                <ColorBox color={themeState.styles[mode].secondary} />
-                <ColorBox color={themeState.styles[mode].border} />
+      <div className="flex-1">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn("group relative w-full justify-between md:min-w-56", className)}
+              {...props}
+            >
+              <div className="flex w-full items-center gap-3 overflow-hidden">
+                <div className="flex gap-0.5">
+                  <ColorBox color={themeState.styles[mode].primary} />
+                  <ColorBox color={themeState.styles[mode].accent} />
+                  <ColorBox color={themeState.styles[mode].secondary} />
+                  <ColorBox color={themeState.styles[mode].border} />
+                </div>
+                {currentPresetName !== "default" &&
+                  currentPresetName &&
+                  isSavedTheme(currentPresetName) &&
+                  !hasUnsavedChanges() && (
+                    <div className="bg-muted rounded-full p-1">
+                      <Heart
+                        className="size-1"
+                        stroke="var(--muted)"
+                        fill="var(--muted-foreground)"
+                      />
+                    </div>
+                  )}
+                <span className="truncate text-left font-medium capitalize">
+                  {hasUnsavedChanges() ? (
+                    <>Custom (Unsaved)</>
+                  ) : (
+                    presets[currentPresetName || "default"]?.label || "default"
+                  )}
+                </span>
               </div>
-              {currentPresetName !== "default" &&
-                currentPresetName &&
-                isSavedTheme(currentPresetName) &&
-                !hasUnsavedChanges() && (
-                  <div className="bg-muted rounded-full p-1">
-                    <Heart
-                      className="size-1"
-                      stroke="var(--muted)"
-                      fill="var(--muted-foreground)"
-                    />
-                  </div>
-                )}
-              <span className="truncate text-left font-medium capitalize">
-                {hasUnsavedChanges() ? (
-                  <>Custom (Unsaved)</>
-                ) : (
-                  presets[currentPresetName || "default"]?.label || "default"
-                )}
-              </span>
-            </div>
-            <ChevronDown className="size-4 shrink-0" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0" align="center">
-          <Command className="h-100 w-full">
-            <div className="flex w-full items-center">
-              <div className="flex w-full items-center border-b px-3 py-1">
-                <Search className="size-4 shrink-0 opacity-50" />
-                <Input
-                  placeholder="Search themes..."
-                  className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
+              <ChevronDown className="size-4 shrink-0" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0" align="center">
+            <Command className="h-100 w-full">
+              <div className="flex w-full items-center">
+                <div className="flex w-full items-center border-b px-3 py-1">
+                  <Search className="size-4 shrink-0 opacity-50" />
+                  <Input
+                    placeholder="Search themes..."
+                    className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex items-center justify-between px-3 py-2">
-              <div className="text-muted-foreground text-sm">
-                {filteredPresets.length} theme
-                {filteredPresets.length !== 1 ? "s" : ""}
+              <div className="flex items-center justify-between px-3 py-2">
+                <div className="text-muted-foreground text-sm">
+                  {filteredPresets.length} theme
+                  {filteredPresets.length !== 1 ? "s" : ""}
+                </div>
+                <ThemeControls />
               </div>
-              <ThemeControls />
-            </div>
-            <Separator />
-            <ScrollArea className="h-[500px] max-h-[70vh]">
-              <CommandEmpty>No themes found.</CommandEmpty>
+              <Separator />
+              <ScrollArea className="h-[500px] max-h-[70vh]">
+                <CommandEmpty>No themes found.</CommandEmpty>
 
-              {/* Saved Themes Group */}
-              {filteredSavedThemes.length > 0 && (
-                <>
-                  <CommandGroup
-                    heading={
-                      <div className="flex w-full items-center justify-between">
-                        <span>Saved Themes</span>
-                        {/* <Link href="/settings/themes">
+                {/* Saved Themes Group */}
+                {filteredSavedThemes.length > 0 && (
+                  <>
+                    <CommandGroup
+                      heading={
+                        <div className="flex w-full items-center justify-between">
+                          <span>Saved Themes</span>
+                          {/* <Link href="/settings/themes">
                           <Button
                             variant="link"
                             size="sm"
@@ -327,90 +328,91 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                             <Settings className="size-3.5!" />
                           </Button>
                         </Link> */}
-                      </div>
-                    }
-                  >
-                    {filteredSavedThemes
-                      .filter((name) => name !== "default" && isSavedTheme(name))
-                      .map((presetName, index) => (
-                        <CommandItem
-                          key={`${presetName}-${index}`}
-                          value={`${presetName}-${index}`}
-                          onSelect={() => {
-                            applyThemePreset(presetName);
-                            setSearch("");
-                          }}
-                          className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
-                        >
-                          <ThemeColors presetName={presetName} mode={mode} />
-                          <div className="flex flex-1 items-center gap-2">
-                            <span className="line-clamp-1 text-sm font-medium capitalize">
-                              {presets[presetName]?.label || presetName}
-                            </span>
-                            {presets[presetName] && isThemeNew(presets[presetName]) && (
-                              <Badge variant="secondary" className="rounded-full text-xs">
-                                New
-                              </Badge>
-                            )}
-                          </div>
-                          {presetName === currentPresetName && (
-                            <Check className="h-4 w-4 shrink-0 opacity-70" />
-                          )}
-                        </CommandItem>
-                      ))}
-                  </CommandGroup>
-                  <Separator className="my-2" />
-                </>
-              )}
-
-              {filteredSavedThemes.length === 0 && search.trim() === "" && (
-                <>
-                  <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
-                    <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
-                      <Heart className="fill-muted-foreground size-3" />
-                      <span>Save</span>
-                    </div>
-                    <span className="text-muted-foreground">a theme to find it here.</span>
-                  </div>
-                  <Separator />
-                </>
-              )}
-
-              {/* Default Theme Group */}
-              {filteredDefaultThemes.length > 0 && (
-                <CommandGroup heading="Built-in Themes">
-                  {filteredDefaultThemes.map((presetName, index) => (
-                    <CommandItem
-                      key={`${presetName}-${index}`}
-                      value={`${presetName}-${index}`}
-                      onSelect={() => {
-                        applyThemePreset(presetName);
-                        setSearch("");
-                      }}
-                      className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
+                        </div>
+                      }
                     >
-                      <ThemeColors presetName={presetName} mode={mode} />
-                      <div className="flex flex-1 items-center gap-2">
-                        <span className="text-sm font-medium capitalize">
-                          {presets[presetName]?.label || presetName}
-                        </span>
-                        {presets[presetName] && isThemeNew(presets[presetName]) && (
-                          <Badge variant="secondary" className="rounded-full text-xs">
-                            New
-                          </Badge>
-                        )}
+                      {filteredSavedThemes
+                        .filter((name) => name !== "default" && isSavedTheme(name))
+                        .map((presetName, index) => (
+                          <CommandItem
+                            key={`${presetName}-${index}`}
+                            value={`${presetName}-${index}`}
+                            onSelect={() => {
+                              applyThemePreset(presetName);
+                              setSearch("");
+                            }}
+                            className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
+                          >
+                            <ThemeColors presetName={presetName} mode={mode} />
+                            <div className="flex flex-1 items-center gap-2">
+                              <span className="line-clamp-1 text-sm font-medium capitalize">
+                                {presets[presetName]?.label || presetName}
+                              </span>
+                              {presets[presetName] && isThemeNew(presets[presetName]) && (
+                                <Badge variant="secondary" className="rounded-full text-xs">
+                                  New
+                                </Badge>
+                              )}
+                            </div>
+                            {presetName === currentPresetName && (
+                              <Check className="h-4 w-4 shrink-0 opacity-70" />
+                            )}
+                          </CommandItem>
+                        ))}
+                    </CommandGroup>
+                    <Separator className="my-2" />
+                  </>
+                )}
+
+                {filteredSavedThemes.length === 0 && search.trim() === "" && (
+                  <>
+                    <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
+                      <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
+                        <Heart className="fill-muted-foreground size-3" />
+                        <span>Save</span>
                       </div>
-                      {presetName === currentPresetName && (
-                        <Check className="h-4 w-4 shrink-0 opacity-70" />
-                      )}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-            </ScrollArea>
-          </Command>
-        </PopoverContent>
-      </Popover>
+                      <span className="text-muted-foreground">a theme to find it here.</span>
+                    </div>
+                    <Separator />
+                  </>
+                )}
+
+                {/* Default Theme Group */}
+                {filteredDefaultThemes.length > 0 && (
+                  <CommandGroup heading="Built-in Themes">
+                    {filteredDefaultThemes.map((presetName, index) => (
+                      <CommandItem
+                        key={`${presetName}-${index}`}
+                        value={`${presetName}-${index}`}
+                        onSelect={() => {
+                          applyThemePreset(presetName);
+                          setSearch("");
+                        }}
+                        className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
+                      >
+                        <ThemeColors presetName={presetName} mode={mode} />
+                        <div className="flex flex-1 items-center gap-2">
+                          <span className="text-sm font-medium capitalize">
+                            {presets[presetName]?.label || presetName}
+                          </span>
+                          {presets[presetName] && isThemeNew(presets[presetName]) && (
+                            <Badge variant="secondary" className="rounded-full text-xs">
+                              New
+                            </Badge>
+                          )}
+                        </div>
+                        {presetName === currentPresetName && (
+                          <Check className="h-4 w-4 shrink-0 opacity-70" />
+                        )}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
+              </ScrollArea>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {withCycleThemes && (
         <ThemePresetCycleControls

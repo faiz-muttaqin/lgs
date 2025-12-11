@@ -6,7 +6,7 @@ import { Logo } from '@/assets/logo'
 import {
     Card,
 } from '@/components/ui/card'
-import { UserAuthForm } from './components/user-auth-form'
+import { UserAuthForm } from '@/components/UserAuthForm'
 import { Link } from '@tanstack/react-router'
 
 export function SignIn() {

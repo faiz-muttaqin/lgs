@@ -1,7 +1,7 @@
 import { Logo } from '../atoms/Logo';
 import { SearchBar } from '../molecules/SearchBar';
 import { CartButton } from '../molecules/CartButton';
-import { AuthButtons } from '../molecules/AuthButtons';
+import { ProfileDropdown } from '@/components/ProfileDropdown';
 import { CategoryList } from '../molecules/CategoryList';
 import { categories } from '../../data/mockData';
 import ThemePresetSelect from '@/features/editor-theme/components/theme-preset-select';
@@ -27,7 +27,8 @@ export const Header = () => {
           <div className="flex items-center gap-2">
             <ThemePresetSelect withCycleThemes={false} className="w-10" />
             <CartButton count={3} />
-            <AuthButtons />
+            {/* <AuthButtons /> */}
+            <ProfileDropdown />
           </div>
         </div>
 

@@ -25,6 +25,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import ThemePresetSelect from '@/features/editor-theme/components/theme-preset-select';
+
 import { useSidebar } from './ui/sidebar'
 
 export function ConfigDrawer() {
@@ -61,6 +63,11 @@ export function ConfigDrawer() {
           </SheetDescription>
         </SheetHeader>
         <div className='space-y-6 overflow-y-auto px-4'>
+          <SectionTitle
+            title='Theme'
+            showReset={false}
+          />
+          <ThemePresetSelect className="w-10" />
           <ThemeConfig />
           <SidebarConfig />
           <LayoutConfig />
@@ -152,7 +159,7 @@ function RadioGroupItem({
         <item.icon
           className={cn(
             !isTheme &&
-              'stroke-primary fill-primary group-data-[state=unchecked]:stroke-muted-foreground group-data-[state=unchecked]:fill-muted-foreground'
+            'stroke-primary fill-primary group-data-[state=unchecked]:stroke-muted-foreground group-data-[state=unchecked]:fill-muted-foreground'
           )}
           aria-hidden='true'
         />
@@ -173,7 +180,7 @@ function ThemeConfig() {
   return (
     <div>
       <SectionTitle
-        title='Theme'
+        title='Theme Mode'
         showReset={theme !== defaultTheme}
         onReset={() => setTheme(defaultTheme)}
       />

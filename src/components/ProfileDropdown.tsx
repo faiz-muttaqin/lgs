@@ -14,10 +14,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOutDialog } from '@/components/SignOutDialog'
+import { UserAuthForm } from '@/components/UserAuthForm'
+import { SignUpForm } from '@/components/SignUpForm'
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+} from '@/components/ui/revola'
 import { auth as firebaseAuth } from '@/lib/firebase'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
+  const [authOpen, setAuthOpen] = useDialogState<'signin' | 'signup'>(null)
   const { user: backendUser } = useAuth()
   const firebaseUser = firebaseAuth.currentUser
 
@@ -36,57 +43,83 @@ export function ProfileDropdown() {
 
   return (
     <>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
-            <Avatar className='h-8 w-8'>
-              {photoURL && <AvatarImage src={photoURL} alt={displayName} />}
-              <AvatarFallback>{initials}</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className='w-56' align='end' forceMount>
-          <DropdownMenuLabel className='font-normal'>
-            <div className='flex flex-col gap-1.5'>
-              <p className='text-sm leading-none font-medium'>{displayName}</p>
-              <p className='text-muted-foreground text-xs leading-none'>
-                {userEmail}
-              </p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem asChild>
-              <Link to='/dashboard/settings'>
-                Profile
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to='/dashboard/settings'>
-                Billing
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to='/dashboard/settings'>
-                Settings
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>
-            Sign out
-            <DropdownMenuShortcut className='text-current'>
-              ⇧⌘Q
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* If not authenticated, show Login / Register buttons */}
+      {!(firebaseUser || backendUser) ? (
+        <>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={() => setAuthOpen('signin')}>
+              Login
+            </Button>
+            <Button onClick={() => setAuthOpen('signup')}>Register</Button>
+          </div>
 
-      <SignOutDialog open={!!open} onOpenChange={setOpen} />
+          <ResponsiveDialog
+            open={!!authOpen}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) setAuthOpen(null)
+            }}
+          >
+            <ResponsiveDialogContent className="sm:max-w-lg p-8">
+              {authOpen === 'signin' && <UserAuthForm />}
+              {authOpen === 'signup' && <SignUpForm />}
+            </ResponsiveDialogContent>
+          </ResponsiveDialog>
+        </>
+      ) : (
+        <>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
+                <Avatar className='h-8 w-8'>
+                  {photoURL && <AvatarImage src={photoURL} alt={displayName} />}
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className='w-56' align='end' forceMount>
+              <DropdownMenuLabel className='font-normal'>
+                <div className='flex flex-col gap-1.5'>
+                  <p className='text-sm leading-none font-medium'>{displayName}</p>
+                  <p className='text-muted-foreground text-xs leading-none'>
+                    {userEmail}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link to='/dashboard/settings'>
+                    Profile
+                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to='/dashboard/settings'>
+                    Billing
+                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to='/dashboard/settings'>
+                    Settings
+                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>New Team</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>
+                Sign out
+                <DropdownMenuShortcut className='text-current'>
+                  ⇧⌘Q
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <SignOutDialog open={!!open} onOpenChange={setOpen} />
+        </>
+      )}
     </>
   )
 }
