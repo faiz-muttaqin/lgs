@@ -1,0 +1,20 @@
+/* Custom scrollbar hiding for horizontal carousels */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure images don't exceed their containers */
+img {
+  max-width: 100%;
+  height: auto;
+}
