@@ -65,7 +65,7 @@ func StartServer(embeddedFiles embed.FS) {
 	defer ginLogFile.Close()
 
 	// routes.R.Use(middleware.CacheControlMiddleware())
-	routes.InitGinMode()
+	gin.SetMode(util.Getenv("APP_GIN_MODE", "release"))
 	routes.R = gin.Default()
 	routes.R.Use(logger.GinLoggerMiddleware(ginLogFile))
 	routes.R.Use(middleware.Security())

@@ -143,19 +143,33 @@ func AutoMigrateDBProduct(db *gorm.DB) error {
 		return fmt.Errorf("failed creating subcategories: %w", err)
 	}
 
-	// Seed Shops
-	shops := []model.Shop{
-		{Name: "TechHub Official", Slug: "techhub-official", Domain: "techhub.com", City: "Jakarta", ImageURL: imageURLs[17], IsOfficial: true},
-		{Name: "Fashion Store", Slug: "fashion-store", Domain: "fashionstore.com", City: "Bandung", ImageURL: imageURLs[18], IsOfficial: true},
-		{Name: "HomeGoods Market", Slug: "homegoods-market", Domain: "homegoods.com", City: "Surabaya", ImageURL: imageURLs[19], IsOfficial: false},
-		{Name: "Sports Pro", Slug: "sports-pro", Domain: "sportspro.com", City: "Medan", ImageURL: imageURLs[20], IsOfficial: true},
-		{Name: "Beauty Plus", Slug: "beauty-plus", Domain: "beautyplus.com", City: "Semarang", ImageURL: imageURLs[21], IsOfficial: false},
-		{Name: "Gadget World", Slug: "gadget-world", Domain: "gadgetworld.com", City: "Yogyakarta", ImageURL: imageURLs[22], IsOfficial: true},
-		{Name: "Style Avenue", Slug: "style-avenue", Domain: "styleavenue.com", City: "Malang", ImageURL: imageURLs[23], IsOfficial: false},
-		{Name: "Kitchen Master", Slug: "kitchen-master", Domain: "kitchenmaster.com", City: "Palembang", ImageURL: imageURLs[24], IsOfficial: true},
-	}
-	if err := db.Create(&shops).Error; err != nil {
-		return fmt.Errorf("failed creating shops: %w", err)
+	// Get existing shops (created by users) and create additional demo shops if needed
+	var existingShops []model.Shop
+	db.Find(&existingShops)
+
+	// If no shops exist or we need more, create additional demo shops
+	var shops []model.Shop
+	if len(existingShops) == 0 {
+		// Create demo shops only if none exist
+		// Note: In production, these would be created by actual users
+		shops = []model.Shop{
+			{UserID: 999, Name: "TechHub Official", Slug: "techhub-official", Domain: "techhub.com", City: "Jakarta", ImageURL: imageURLs[17], IsOfficial: true, IsActive: true},
+			{UserID: 998, Name: "Fashion Store", Slug: "fashion-store", Domain: "fashionstore.com", City: "Bandung", ImageURL: imageURLs[18], IsOfficial: true, IsActive: true},
+			{UserID: 997, Name: "HomeGoods Market", Slug: "homegoods-market", Domain: "homegoods.com", City: "Surabaya", ImageURL: imageURLs[19], IsOfficial: false, IsActive: true},
+			{UserID: 996, Name: "Sports Pro", Slug: "sports-pro", Domain: "sportspro.com", City: "Medan", ImageURL: imageURLs[20], IsOfficial: true, IsActive: true},
+			{UserID: 995, Name: "Beauty Plus", Slug: "beauty-plus", Domain: "beautyplus.com", City: "Semarang", ImageURL: imageURLs[21], IsOfficial: false, IsActive: true},
+			{UserID: 994, Name: "Gadget World", Slug: "gadget-world", Domain: "gadgetworld.com", City: "Yogyakarta", ImageURL: imageURLs[22], IsOfficial: true, IsActive: true},
+			{UserID: 993, Name: "Style Avenue", Slug: "style-avenue", Domain: "styleavenue.com", City: "Malang", ImageURL: imageURLs[23], IsOfficial: false, IsActive: true},
+			{UserID: 992, Name: "Kitchen Master", Slug: "kitchen-master", Domain: "kitchenmaster.com", City: "Palembang", ImageURL: imageURLs[24], IsOfficial: true, IsActive: true},
+		}
+		// Create these demo shops without UserID constraint (for demo purposes only)
+		for i := range shops {
+			db.Exec("INSERT INTO shops (user_id, name, slug, domain, city, image_url, is_official, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+				shops[i].UserID, shops[i].Name, shops[i].Slug, shops[i].Domain, shops[i].City, shops[i].ImageURL, shops[i].IsOfficial, shops[i].IsActive)
+		}
+		db.Find(&shops)
+	} else {
+		shops = existingShops
 	}
 
 	// Product names by category

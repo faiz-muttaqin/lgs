@@ -51,18 +51,21 @@ func (SubCategory) TableName() string {
 
 // Shop represents the seller/shop information
 type Shop struct {
-	ID         uint           `gorm:"primaryKey;column:id" json:"id"`
-	ExternalID string         `gorm:"column:external_id;size:100;unique" json:"external_id"`
-	Name       string         `gorm:"column:name;size:200;not null" json:"name" ui:"creatable;visible;editable;filterable;sortable"`
-	Slug       string         `gorm:"column:slug;size:200;unique;not null;index" json:"slug"`
-	Domain     string         `gorm:"column:domain;size:200" json:"domain"`
-	City       string         `gorm:"column:city;size:100" json:"city" ui:"visible;filterable"`
-	ImageURL   string         `gorm:"column:image_url;size:500" json:"image_url"`
-	Reputation string         `gorm:"column:reputation;size:500" json:"reputation"`
-	IsOfficial bool           `gorm:"column:is_official;default:false" json:"is_official" ui:"visible;filterable"`
-	CreatedAt  time.Time      `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt  time.Time      `gorm:"column:updated_at" json:"updated_at"`
-	DeletedAt  gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+	ID          uint           `gorm:"primaryKey;column:id" json:"id"`
+	UserID      uint           `gorm:"column:user_id;unique;not null;index" json:"user_id" ui:"visible;filterable"`
+	ExternalID  string         `gorm:"column:external_id;size:100;unique" json:"external_id"`
+	Name        string         `gorm:"column:name;size:200;not null" json:"name" ui:"creatable;visible;editable;filterable;sortable"`
+	Slug        string         `gorm:"column:slug;size:200;unique;not null;index" json:"slug"`
+	Domain      string         `gorm:"column:domain;size:200" json:"domain"`
+	City        string         `gorm:"column:city;size:100" json:"city" ui:"visible;filterable"`
+	ImageURL    string         `gorm:"column:image_url;size:500" json:"image_url"`
+	Reputation  string         `gorm:"column:reputation;size:500" json:"reputation"`
+	IsOfficial  bool           `gorm:"column:is_official;default:false" json:"is_official" ui:"visible;filterable"`
+	IsActive    bool           `gorm:"column:is_active;default:true" json:"is_active" ui:"visible;filterable"`
+	Description string         `gorm:"column:description;type:text" json:"description" ui:"creatable;visible;editable"`
+	CreatedAt   time.Time      `gorm:"column:created_at" json:"created_at"`
+	UpdatedAt   time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 
 	// Relations
 	Products []Product `gorm:"foreignKey:ShopID" json:"products,omitempty"`
@@ -70,6 +73,21 @@ type Shop struct {
 
 func (Shop) TableName() string {
 	return "shops"
+}
+
+// BeforeCreate hook to generate slug if not provided
+func (s *Shop) BeforeCreate(tx *gorm.DB) error {
+	if s.Slug == "" {
+		s.Slug = generateShopSlug(s.Name)
+	}
+	return nil
+}
+
+// Helper function to generate shop slug
+func generateShopSlug(name string) string {
+	slug := name
+	// Simple implementation - in production use a proper slug library
+	return slug
 }
 
 // Product represents the main product model

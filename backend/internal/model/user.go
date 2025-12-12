@@ -30,6 +30,7 @@ type User struct {
 	RoleID             uint           `gorm:"column:role_id;index" json:"role_id"`
 	UserRole           UserRole       `gorm:"foreignKey:RoleID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL" json:"user_role" `
 	Role               types.HTML     `gorm:"-" json:"role" ui:"visible;visibility;editable;filterable;sortable;selection:/options?data=role"`
+	HasShop            bool           `gorm:"-" json:"has_shop"` // Virtual field to check if user has shop
 
 	CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
@@ -73,6 +74,12 @@ func (m *User) BeforeCreate(tx *gorm.DB) (err error) {
 }
 func (u *User) AfterFind(tx *gorm.DB) error {
 	u.Role = types.HTML(`<i class="` + u.UserRole.Icon + `"></i> ` + u.UserRole.Name)
+
+	// Check if user has a shop
+	var count int64
+	tx.Table("shops").Where("user_id = ? AND deleted_at IS NULL", u.ID).Count(&count)
+	u.HasShop = count > 0
+
 	return nil
 }
 func (m User) IgnoredColumn() []string {

@@ -1,4 +1,4 @@
-package ws
+package websocket
 
 import (
 	"log"
@@ -129,7 +129,7 @@ func checkForReconnection(clientID string, db *gorm.DB) {
 				"SessionExpired": 0,
 			}
 
-			if err := db.Model(&model.Admin{}).Where("email = ?", clientID).Updates(updates).Error; err != nil {
+			if err := db.Model(&model.User{}).Where("email = ?", clientID).Updates(updates).Error; err != nil {
 				return
 			}
 		}

@@ -1,20 +1,37 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/datatypes"
+)
 
 type LogActivity struct {
-	ID           uint      `json:"id" gorm:"column:id;primarykey"`
-	WaktuTanggal time.Time `json:"created_at" gorm:"column:created_at;autoCreateTime"`
-	AdminID      uint      `json:"-" gorm:"column:admin_id"`
-	Action       string    `json:"action" gorm:"column:action"`
-	FullName     string    `json:"full_name" gorm:"column:full_name"`
-	Email        string    `json:"email" gorm:"column:email"`
-	Status       string    `json:"status" gorm:"column:status"`
-	Log          string    `json:"log" gorm:"column:log"`
-	IP           string    `json:"ip" gorm:"column:ip"`
-	UserAgent    string    `json:"user_agent" gorm:"column:user_agent"`
-	ReqMethod    string    `json:"req_method" gorm:"column:req_method"`
-	ReqUri       string    `json:"req_uri" gorm:"column:req_uri"`
+	ID uint `json:"id" gorm:"column:id;primaryKey"`
+
+	// ===== Actor =====
+	UserID    uint   `json:"user_id" gorm:"column:user_id;index"`
+	IP        string `json:"ip" gorm:"column:ip;size:45"` // IPv4/IPv6
+	UserAgent string `json:"user_agent" gorm:"column:user_agent;type:text"`
+
+	// ===== Action =====
+	Action     string `json:"action" gorm:"column:action;size:32;index"`           // CREATE | UPDATE | DELETE | LOGIN | APPROVE
+	Resource   string `json:"resource" gorm:"column:resource;size:64;index"`       // merchant, terminal, user
+	ResourceID string `json:"resource_id" gorm:"column:resource_id;size:64;index"` // "123", UUID, serial number
+
+	// ===== Request Context =====
+	ReqMethod string `json:"req_method" gorm:"column:req_method;size:8"`
+	ReqURI    string `json:"req_uri" gorm:"column:req_uri;type:text"`
+
+	// ===== Change Tracking =====
+	BeforeData datatypes.JSON `json:"before_data,omitempty" gorm:"column:before_data;type:json"` // nil for CREATE
+	AfterData  datatypes.JSON `json:"after_data,omitempty" gorm:"column:after_data;type:json"`   // nil for DELETE
+
+	// ===== Result =====
+	Status  string `json:"status" gorm:"column:status;size:16"` // SUCCESS | FAILED
+	Message string `json:"message,omitempty" gorm:"column:message;type:text"`
+
+	CreatedAt time.Time `json:"created_at" gorm:"column:created_at;autoCreateTime"`
 }
 
 func (LogActivity) TableName() string {

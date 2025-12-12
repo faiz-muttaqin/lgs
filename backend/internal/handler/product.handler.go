@@ -8,6 +8,7 @@ import (
 
 	"github.com/faiz-muttaqin/shadcn-admin-go-starter/backend/internal/helper"
 	"github.com/faiz-muttaqin/shadcn-admin-go-starter/backend/internal/model"
+	"github.com/faiz-muttaqin/shadcn-admin-go-starter/backend/pkg/audit"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -138,6 +139,17 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 		}
 		fmt.Println("User creating product:", userData.Email)
 
+		// Check if user has a shop
+		var userShop model.Shop
+		if err := db.Where("user_id = ?", userData.ID).First(&userShop).Error; err != nil {
+			c.JSON(http.StatusForbidden, gin.H{
+				"success":  false,
+				"message":  "You must create a shop first before adding products. Please visit /my-shop to create your shop.",
+				"has_shop": false,
+			})
+			return
+		}
+
 		var product model.Product
 		if err := c.ShouldBindJSON(&product); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -147,6 +159,9 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
+
+		// Automatically set the shop_id to user's shop
+		product.ShopID = userShop.ID
 
 		// Generate slug from name if not provided
 		if product.Slug == "" {
@@ -159,6 +174,15 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		if err := db.Create(&product).Error; err != nil {
+			// Log failed creation
+			audit.Log(
+				c,
+				db,
+				userData,
+				audit.Create("product", product.ID).
+					After(product).
+					Failed(err),
+			)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"success": false,
 				"message": "Failed to create product",
@@ -166,6 +190,16 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
+
+		// Log successful creation
+		audit.Log(
+			c,
+			db,
+			userData,
+			audit.Create("product", product.ID).
+				After(product).
+				Success("Product created successfully"),
+		)
 
 		c.JSON(http.StatusCreated, gin.H{
 			"success": true,
@@ -194,7 +228,7 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 		var product model.Product
 
 		// Check if product exists
-		if err := db.First(&product, id).Error; err != nil {
+		if err := db.Preload("Shop").First(&product, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				c.JSON(http.StatusNotFound, gin.H{
 					"success": false,
@@ -210,6 +244,25 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// Check if product belongs to user's shop (unless super admin)
+		if userData.RoleID != 1 { // Not super admin
+			var userShop model.Shop
+			if err := db.Where("user_id = ?", userData.ID).First(&userShop).Error; err != nil {
+				c.JSON(http.StatusForbidden, gin.H{
+					"success": false,
+					"message": "You don't have a shop",
+				})
+				return
+			}
+			if product.ShopID != userShop.ID {
+				c.JSON(http.StatusForbidden, gin.H{
+					"success": false,
+					"message": "You can only update products from your own shop",
+				})
+				return
+			}
+		}
+
 		var updateData model.Product
 		if err := c.ShouldBindJSON(&updateData); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -220,8 +273,21 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// Store old product data for audit
+		oldProduct := product
+
 		// Update product
 		if err := db.Model(&product).Updates(updateData).Error; err != nil {
+			// Log failed update
+			audit.Log(
+				c,
+				db,
+				userData,
+				audit.Update("product", product.ID).
+					Before(oldProduct).
+					After(product).
+					Failed(err),
+			)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"success": false,
 				"message": "Failed to update product",
@@ -234,6 +300,17 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 		db.Preload("Category").Preload("SubCategory").Preload("Shop").
 			Preload("Images").Preload("Labels").Preload("Badges").Preload("Variants").
 			First(&product, id)
+
+		// Log successful update
+		audit.Log(
+			c,
+			db,
+			userData,
+			audit.Update("product", product.ID).
+				Before(oldProduct).
+				After(product).
+				Success("Product updated successfully"),
+		)
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
@@ -262,7 +339,7 @@ func DeleteProduct(db *gorm.DB) gin.HandlerFunc {
 		var product model.Product
 
 		// Check if product exists
-		if err := db.First(&product, id).Error; err != nil {
+		if err := db.Preload("Shop").First(&product, id).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				c.JSON(http.StatusNotFound, gin.H{
 					"success": false,
@@ -278,8 +355,39 @@ func DeleteProduct(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// Check if product belongs to user's shop (unless super admin)
+		if userData.RoleID != 1 { // Not super admin
+			var userShop model.Shop
+			if err := db.Where("user_id = ?", userData.ID).First(&userShop).Error; err != nil {
+				c.JSON(http.StatusForbidden, gin.H{
+					"success": false,
+					"message": "You don't have a shop",
+				})
+				return
+			}
+			if product.ShopID != userShop.ID {
+				c.JSON(http.StatusForbidden, gin.H{
+					"success": false,
+					"message": "You can only delete products from your own shop",
+				})
+				return
+			}
+		}
+
+		// Store product data for audit before deletion
+		productBeforeDelete := product
+
 		// Soft delete
 		if err := db.Delete(&product).Error; err != nil {
+			// Log failed deletion
+			audit.Log(
+				c,
+				db,
+				userData,
+				audit.Delete("product", product.ID).
+					Before(productBeforeDelete).
+					Failed(err),
+			)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"success": false,
 				"message": "Failed to delete product",
@@ -287,6 +395,16 @@ func DeleteProduct(db *gorm.DB) gin.HandlerFunc {
 			})
 			return
 		}
+
+		// Log successful deletion
+		audit.Log(
+			c,
+			db,
+			userData,
+			audit.Delete("product", product.ID).
+				Before(productBeforeDelete).
+				Success("Product deleted successfully"),
+		)
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
