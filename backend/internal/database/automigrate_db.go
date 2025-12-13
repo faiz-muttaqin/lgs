@@ -14,6 +14,8 @@ func AutoMigrateDB(db *gorm.DB) error {
 		&model.UserAbilityRule{},
 		&model.User{},
 		&model.WishlistItem{},
+		&model.Chat{},
+		&model.Message{},
 	); err != nil {
 		return err
 	}
