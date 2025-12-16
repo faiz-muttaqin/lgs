@@ -112,7 +112,7 @@ func CreateMyShop(db *gorm.DB) gin.HandlerFunc {
 
 		if err := db.Create(&shop).Error; err != nil {
 			// Log failed creation
-			audit.Log(c, db, userData,
+			audit.Log(c, db, userData.ID,
 				audit.Create("shop", shop.ID).After(shop).Failed(err),
 			)
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -129,7 +129,7 @@ func CreateMyShop(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Log successful creation
-		audit.Log(c, db, userData,
+		audit.Log(c, db, userData.ID,
 			audit.Create("shop", shop.ID).After(shop).Success("Shop created successfully and user upgraded to seller"),
 		)
 
@@ -196,7 +196,7 @@ func UpdateMyShop(db *gorm.DB) gin.HandlerFunc {
 		// Update shop
 		if err := db.Model(&shop).Updates(updateData).Error; err != nil {
 			// Log failed update
-			audit.Log(c, db, userData,
+			audit.Log(c, db, userData.ID,
 				audit.Update("shop", shop.ID).Before(oldShop).After(shop).Failed(err),
 			)
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -211,10 +211,7 @@ func UpdateMyShop(db *gorm.DB) gin.HandlerFunc {
 		db.First(&shop, shop.ID)
 
 		// Log successful update
-		audit.Log(
-			c,
-			db,
-			userData,
+		audit.Log(c, db, userData.ID,
 			audit.Update("shop", shop.ID).
 				Before(oldShop).
 				After(shop).

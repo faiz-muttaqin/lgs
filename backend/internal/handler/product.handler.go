@@ -175,10 +175,7 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 
 		if err := db.Create(&product).Error; err != nil {
 			// Log failed creation
-			audit.Log(
-				c,
-				db,
-				userData,
+			audit.Log(c, db, userData.ID,
 				audit.Create("product", product.ID).
 					After(product).
 					Failed(err),
@@ -195,7 +192,7 @@ func CreateProduct(db *gorm.DB) gin.HandlerFunc {
 		audit.Log(
 			c,
 			db,
-			userData,
+			userData.ID,
 			audit.Create("product", product.ID).
 				After(product).
 				Success("Product created successfully"),
@@ -282,7 +279,7 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 			audit.Log(
 				c,
 				db,
-				userData,
+				userData.ID,
 				audit.Update("product", product.ID).
 					Before(oldProduct).
 					After(product).
@@ -305,7 +302,7 @@ func UpdateProduct(db *gorm.DB) gin.HandlerFunc {
 		audit.Log(
 			c,
 			db,
-			userData,
+			userData.ID,
 			audit.Update("product", product.ID).
 				Before(oldProduct).
 				After(product).
@@ -383,7 +380,7 @@ func DeleteProduct(db *gorm.DB) gin.HandlerFunc {
 			audit.Log(
 				c,
 				db,
-				userData,
+				userData.ID,
 				audit.Delete("product", product.ID).
 					Before(productBeforeDelete).
 					Failed(err),
@@ -400,7 +397,7 @@ func DeleteProduct(db *gorm.DB) gin.HandlerFunc {
 		audit.Log(
 			c,
 			db,
-			userData,
+			userData.ID,
 			audit.Delete("product", product.ID).
 				Before(productBeforeDelete).
 				Success("Product deleted successfully"),

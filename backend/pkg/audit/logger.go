@@ -1,7 +1,6 @@
 package audit
 
 import (
-	"github.com/faiz-muttaqin/lgs/backend/internal/model"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -9,15 +8,15 @@ import (
 func Log(
 	c *gin.Context,
 	db *gorm.DB,
-	user *model.User,
+	userID uint,
 	entry *Entry,
 ) {
 	if c == nil || db == nil || entry == nil {
 		return
 	}
 
-	log := model.LogActivity{
-		UserID:    user.ID,
+	log := LogActivity{
+		UserID:    userID,
 		IP:        c.ClientIP(),
 		UserAgent: c.Request.UserAgent(),
 

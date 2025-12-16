@@ -100,7 +100,7 @@ func AddToWishlist(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		db.Preload("Product").First(&wishlistItem, wishlistItem.ID)
-		audit.Log(c, db, userData, audit.Create("wishlist_item", wishlistItem.ID).After(wishlistItem).Success("Added to wishlist"))
+		audit.Log(c, db, userData.ID, audit.Create("wishlist_item", wishlistItem.ID).After(wishlistItem).Success("Added to wishlist"))
 
 		c.JSON(http.StatusCreated, gin.H{
 			"success": true,
@@ -141,7 +141,7 @@ func UpdateWishlistItem(db *gorm.DB) gin.HandlerFunc {
 		item.Notes = input.Notes
 		db.Save(&item)
 
-		audit.Log(c, db, userData, audit.Update("wishlist_item", item.ID).Before(old).After(item).Success("Updated wishlist item"))
+		audit.Log(c, db, userData.ID, audit.Update("wishlist_item", item.ID).Before(old).After(item).Success("Updated wishlist item"))
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
@@ -175,7 +175,7 @@ func RemoveFromWishlist(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		db.Delete(&item)
-		audit.Log(c, db, userData, audit.Delete("wishlist_item", item.ID).Before(item).Success("Removed from wishlist"))
+		audit.Log(c, db, userData.ID, audit.Delete("wishlist_item", item.ID).Before(item).Success("Removed from wishlist"))
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
@@ -208,7 +208,7 @@ func ClearWishlist(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		db.Where("user_id = ?", userData.ID).Delete(&model.WishlistItem{})
-		audit.Log(c, db, userData, audit.Delete("wishlist", userData.ID).Before(gin.H{"count": len(items)}).Success("Cleared wishlist"))
+		audit.Log(c, db, userData.ID, audit.Delete("wishlist", userData.ID).Before(gin.H{"count": len(items)}).Success("Cleared wishlist"))
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,

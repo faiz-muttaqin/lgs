@@ -96,7 +96,7 @@ func HandleMessages(connectionID string, client *Client, db *gorm.DB) {
 		// Check if user has any remaining connections
 		go checkForReconnection(client.UserID, client.Email, db)
 	}()
-
+	// Listening for incoming messages
 	for {
 		messageType, p, err := client.Conn.ReadMessage()
 		if err != nil {
@@ -111,11 +111,28 @@ func HandleMessages(connectionID string, client *Client, db *gorm.DB) {
 
 		logrus.Printf("Received message from user %s (connection %s): %s", client.Email, connectionID, string(p))
 
-		// Handle the message
-		HandleMessage(messageType, p, client)
+		if messageType == websocket.TextMessage {
+			if strings.HasPrefix(string(p), "TYPING_ON:") {
+				userIDStr := strings.TrimPrefix(string(p), "TYPING_ON:")
+				recipientID, err := strconv.ParseUint(userIDStr, 10, 32)
+				if err != nil {
+					logrus.Println("Invalid TYPING message format:", string(p))
+					continue
+				}
+				SendMessageToUser(websocket.TextMessage, string(p), uint(recipientID))
+			}
+			if strings.HasPrefix(string(p), "TYPING_OFF:") {
+				userIDStr := strings.TrimPrefix(string(p), "TYPING_OFF:")
+				recipientID, err := strconv.ParseUint(userIDStr, 10, 32)
+				if err != nil {
+					logrus.Println("Invalid TYPING message format:", string(p))
+					continue
+				}
+				SendMessageToUser(websocket.TextMessage, string(p), uint(recipientID))
+			}
+		}
 	}
 }
-
 func HandleMessage(messageType int, message []byte, sender *Client) {
 	// Example: Assume messages have the format "recipientUserID:message"
 	parts := strings.SplitN(string(message), ":", 2)

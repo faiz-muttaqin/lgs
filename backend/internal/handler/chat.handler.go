@@ -142,7 +142,7 @@ func GetOrCreateChat(db *gorm.DB) gin.HandlerFunc {
 				return
 			}
 
-			audit.Log(c, db, userData, audit.Create("chat", chat.ID).After(chat).Success("Chat created"))
+			audit.Log(c, db, userData.ID, audit.Create("chat", chat.ID).After(chat).Success("Chat created"))
 		}
 
 		// Load relations
@@ -309,7 +309,7 @@ func SendMessage(db *gorm.DB) gin.HandlerFunc {
 			Preload("ReplyToMessage.Sender").
 			First(&message, message.ID)
 
-		audit.Log(c, db, userData, audit.Create("message", message.ID).After(message).Success("Message sent"))
+		audit.Log(c, db, userData.ID, audit.Create("message", message.ID).After(message).Success("Message sent"))
 
 		c.JSON(http.StatusCreated, gin.H{
 			"success": true,
@@ -507,7 +507,7 @@ func EditMessage(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		audit.Log(c, db, userData, audit.Update("message", message.ID).Before(oldMessage).After(message).Success("Message edited"))
+		audit.Log(c, db, userData.ID, audit.Update("message", message.ID).Before(oldMessage).After(message).Success("Message edited"))
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
@@ -563,7 +563,7 @@ func DeleteMessage(db *gorm.DB) gin.HandlerFunc {
 		message.Content = "[Message deleted]"
 		db.Save(&message)
 
-		audit.Log(c, db, userData, audit.Delete("message", message.ID).Before(message).Success("Message deleted"))
+		audit.Log(c, db, userData.ID, audit.Delete("message", message.ID).Before(message).Success("Message deleted"))
 
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
