@@ -65,17 +65,16 @@ func Routes() {
 	r.DELETE("/wishlist/clear", handler.ClearWishlist(database.DB))    // Clear entire wishlist
 
 	// Chat endpoints - Protected (User messaging system)
-	chatHandler := handler.NewChatHandler(database.DB)
-	r.GET("/chats", chatHandler.GetMyChats)                          // Get all user's chats
-	r.POST("/chats", chatHandler.GetOrCreateChat)                    // Get or create chat with another user
-	r.GET("/chats/:id/messages", chatHandler.GetChatMessages)        // Get messages in a chat
-	r.POST("/chats/:id/messages", chatHandler.SendMessage)           // Send message in a chat
-	r.PUT("/chats/:id/read", chatHandler.MarkChatRead)               // Mark all messages in chat as read
-	r.PUT("/messages/:id/received", chatHandler.MarkMessageReceived) // Mark message as received
-	r.PUT("/messages/:id/read", chatHandler.MarkMessageRead)         // Mark message as read
-	r.PUT("/messages/:id", chatHandler.EditMessage)                  // Edit message (within 7 mins, not read)
-	r.DELETE("/messages/:id", chatHandler.DeleteMessage)             // Delete message (within 7 mins, not read)
-	r.GET("/messages/unread", chatHandler.GetUnreadMessages)         // Get all unread messages
-	r.GET("/messages/unread/count", chatHandler.GetUnreadCount)      // Get unread count
+	r.GET("/chats", handler.GetMyChats(database.DB))                          // Get all user's chats
+	r.POST("/chats", handler.GetOrCreateChat(database.DB))                    // Get or create chat with another user
+	r.GET("/chats/:id/messages", handler.GetChatMessages(database.DB))        // Get messages in a chat
+	r.POST("/chats/:id/messages", handler.SendMessage(database.DB))           // Send message in a chat
+	r.PUT("/chats/:id/read", handler.MarkChatRead(database.DB))               // Mark all messages in chat as read
+	r.PUT("/messages/:id/received", handler.MarkMessageReceived(database.DB)) // Mark message as received
+	r.PUT("/messages/:id/read", handler.MarkMessageRead(database.DB))         // Mark message as read
+	r.PUT("/messages/:id", handler.EditMessage(database.DB))                  // Edit message (within 7 mins, not read)
+	r.DELETE("/messages/:id", handler.DeleteMessage(database.DB))             // Delete message (within 7 mins, not read)
+	r.GET("/messages/unread", handler.GetUnreadMessages(database.DB))         // Get all unread messages
+	r.GET("/messages/unread/count", handler.GetUnreadCount(database.DB))      // Get unread count
 
 }
