@@ -57,12 +57,11 @@ func Routes() {
 	r.GET("/my-shop/check", handler.CheckShopAvailability(database.DB)) // Check if user can create shop
 
 	// Wishlist endpoints - Protected (User's wishlist for saved products)
-	wishlistHandler := handler.NewWishlistHandler(database.DB)
-	r.GET("/my-wishlist", wishlistHandler.GetMyWishlist)          // Get user's wishlist
-	r.POST("/wishlist/add", wishlistHandler.AddToWishlist)        // Add product to wishlist
-	r.PUT("/wishlist/:id", wishlistHandler.UpdateWishlistItem)    // Update wishlist item notes
-	r.PATCH("/wishlist/:id", wishlistHandler.UpdateWishlistItem)  // Update wishlist item (alias)
-	r.DELETE("/wishlist/:id", wishlistHandler.RemoveFromWishlist) // Remove item from wishlist
-	r.DELETE("/wishlist/clear", wishlistHandler.ClearWishlist)    // Clear entire wishlist
+	r.GET("/my-wishlist", handler.GetMyWishlist(database.DB))          // Get user's wishlist
+	r.POST("/wishlist/add", handler.AddToWishlist(database.DB))        // Add product to wishlist
+	r.PUT("/wishlist/:id", handler.UpdateWishlistItem(database.DB))    // Update wishlist item notes
+	r.PATCH("/wishlist/:id", handler.UpdateWishlistItem(database.DB))  // Update wishlist item (alias)
+	r.DELETE("/wishlist/:id", handler.RemoveFromWishlist(database.DB)) // Remove item from wishlist
+	r.DELETE("/wishlist/clear", handler.ClearWishlist(database.DB))    // Clear entire wishlist
 
 }
