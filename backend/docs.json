@@ -87,7 +87,7 @@
   "info": {
     "description": "API Documentation for lucky-goods-store",
     "title": "lucky-goods-store",
-    "version": "0.0.27"
+    "version": "0.0.62"
   },
   "openapi": "3.0.4",
   "paths": {
@@ -12336,6 +12336,811 @@
         ]
       }
     },
+    "/api/chats": {
+      "post": {
+        "description": "Create a new resource with the provided data",
+        "operationId": "postApiChats",
+        "parameters": null,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "chat",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            },
+            "description": "Resource created successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Invalid input",
+                      "success": "false"
+                    }
+                  },
+                  "Example2": {
+                    "value": {
+                      "message": "Cannot create chat with yourself",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Failed to create chat",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 500"
+          }
+        },
+        "security": null,
+        "summary": "Create new GetOrCreateChat",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/chats/:id/messages": {
+      "post": {
+        "description": "Create a new resource with the provided data",
+        "operationId": "postApiChats:IdMessages",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "message",
+                      "message": "Message sent",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 201"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Invalid input",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Chat not found",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 404"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Failed to send message",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 500"
+          }
+        },
+        "security": null,
+        "summary": "Create new SendMessage",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/chats/:id/read": {
+      "put": {
+        "description": "Update an existing resource with the provided data",
+        "operationId": "putApiChats:IdRead",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "All messages marked as read",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Chat not found",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 404"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Update MarkChatRead",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/messages/:id": {
+      "put": {
+        "description": "Update an existing resource with the provided data",
+        "operationId": "putApiMessages:Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "message",
+                      "message": "Message edited",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Cannot edit message after 7 minutes",
+                      "success": "false"
+                    }
+                  },
+                  "Example2": {
+                    "value": {
+                      "message": "Cannot edit message that has been read",
+                      "success": "false"
+                    }
+                  },
+                  "Example3": {
+                    "value": {
+                      "message": "Invalid input",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Message not found",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 404"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Failed to edit message",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 500"
+          }
+        },
+        "security": null,
+        "summary": "Update EditMessage",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/messages/:id/read": {
+      "put": {
+        "description": "Update an existing resource with the provided data",
+        "operationId": "putApiMessages:IdRead",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Message marked as read",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Message not found",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 404"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Update MarkMessageRead",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/messages/:id/received": {
+      "put": {
+        "description": "Update an existing resource with the provided data",
+        "operationId": "putApiMessages:IdReceived",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Message marked as received",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Message not found",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 404"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Update MarkMessageReceived",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/messages/unread": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getApiMessagesUnread",
+        "parameters": null,
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "[]interface{}{}",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Failed to retrieve unread messages",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 500"
+          }
+        },
+        "security": null,
+        "summary": "Get all GetUnreadMessages",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/messages/unread/count": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getApiMessagesUnreadCount",
+        "parameters": null,
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "[]interface{}{}",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Get all GetUnreadCount",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
     "/api/my-shop": {
       "put": {
         "description": "Update an existing resource with the provided data",
@@ -12625,6 +13430,86 @@
         ]
       }
     },
+    "/api/my-wishlist": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getApiMy-Wishlist",
+        "parameters": null,
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "[]interface{}{}",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Failed to retrieve wishlist",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 500"
+          }
+        },
+        "security": null,
+        "summary": "Get all GetMyWishlist",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
     "/api/options": {
       "get": {
         "description": "Retrieve a list of resources with optional filtering and pagination",
@@ -12819,9 +13704,9 @@
       }
     },
     "/api/products/:id": {
-      "delete": {
-        "description": "Remove an existing resource",
-        "operationId": "deleteApiProducts:Id",
+      "put": {
+        "description": "Update an existing resource with the provided data",
+        "operationId": "putApiProducts:Id",
         "parameters": [
           {
             "in": "path",
@@ -12830,7 +13715,17 @@
             "type": "string"
           }
         ],
-        "requestBody": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -12838,7 +13733,8 @@
                 "examples": {
                   "Example1": {
                     "value": {
-                      "message": "Product deleted successfully",
+                      "data": "product",
+                      "message": "Product updated successfully",
                       "success": "true"
                     }
                   }
@@ -12847,8 +13743,21 @@
             },
             "description": "Response 200"
           },
-          "204": {
-            "description": "Resource deleted successfully"
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "error": "*ast.CallExpr",
+                      "message": "Invalid request body",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 400"
           },
           "401": {
             "content": {
@@ -12878,7 +13787,7 @@
                   },
                   "Example2": {
                     "value": {
-                      "message": "You can only delete products from your own shop",
+                      "message": "You can only update products from your own shop",
                       "success": "false"
                     }
                   }
@@ -12916,7 +13825,7 @@
                   "Example2": {
                     "value": {
                       "error": "*ast.CallExpr",
-                      "message": "Failed to delete product",
+                      "message": "Failed to update product",
                       "success": "false"
                     }
                   }
@@ -12927,7 +13836,7 @@
           }
         },
         "security": null,
-        "summary": "Delete DeleteProduct",
+        "summary": "Update UpdateProduct",
         "tags": [
           "Api"
         ]
@@ -13389,10 +14298,47 @@
       }
     },
     "/api/users": {
-      "delete": {
-        "description": "Remove an existing resource",
-        "operationId": "deleteApiUsers",
-        "parameters": null,
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getApiUsers",
+        "parameters": [
+          {
+            "description": "Header Content-Type",
+            "in": "header",
+            "name": "Content-Type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Header Content-Disposition",
+            "in": "header",
+            "name": "Content-Disposition",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Query colKey (dynamic parameter)",
+            "in": "",
+            "name": "colKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Query columns[*][search][value] (dynamic parameter)",
+            "in": "",
+            "name": "columns[*][search][value]",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/x-www-form-urlencoded": {
@@ -13411,6 +14357,18 @@
                 "examples": {
                   "Example1": {
                     "value": {
+                      "data": "data",
+                      "message": "Fetched all records (fallback, no query found)",
+                      "success": "true"
+                    }
+                  },
+                  "Example2": {
+                    "value": {
+                      "data": "data",
+                      "draw": "*ast.SelectorExpr",
+                      "message": "OK",
+                      "recordsFiltered": "filteredRecords",
+                      "recordsTotal": "totalRecords",
                       "success": "true"
                     }
                   }
@@ -13419,22 +14377,13 @@
             },
             "description": "Response 200"
           },
-          "204": {
-            "description": "Resource deleted successfully"
-          },
           "400": {
             "content": {
               "application/json": {
                 "examples": {
                   "Example1": {
                     "value": {
-                      "error": "*ast.CallExpr"
-                    }
-                  },
-                  "Example2": {
-                    "value": {
-                      "error": "No ID provided",
-                      "message": "No ID provided",
+                      "error": "*ast.CallExpr",
                       "success": "false"
                     }
                   }
@@ -13479,6 +14428,20 @@
                 "examples": {
                   "Example1": {
                     "value": {
+                      "error": "*ast.CallExpr",
+                      "message": "*ast.CallExpr",
+                      "success": "false"
+                    }
+                  },
+                  "Example2": {
+                    "value": {
+                      "error": "*ast.CallExpr",
+                      "message": "*ast.CallExpr",
+                      "success": "false"
+                    }
+                  },
+                  "Example3": {
+                    "value": {
                       "error": "*ast.CallExpr"
                     }
                   }
@@ -13489,7 +14452,376 @@
           }
         },
         "security": null,
-        "summary": "Delete DELETE_DEFAULT_TableDataHandler",
+        "summary": "Get all GET_DEFAULT_TableDataHandler",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/wishlist/:id": {
+      "put": {
+        "description": "Update an existing resource with the provided data",
+        "operationId": "putApiWishlist:Id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "item",
+                      "message": "Updated",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad request - Invalid input data"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Item not found",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 404"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Update UpdateWishlistItem",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/wishlist/add": {
+      "post": {
+        "description": "Create a new resource with the provided data",
+        "operationId": "postApiWishlistAdd",
+        "parameters": null,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "existing",
+                      "message": "Product already in wishlist",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "data": "wishlistItem",
+                      "message": "Added to wishlist",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 201"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Invalid input",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 400"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Failed to add to wishlist",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 500"
+          }
+        },
+        "security": null,
+        "summary": "Create new AddToWishlist",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/wishlist/clear": {
+      "delete": {
+        "description": "Remove an existing resource",
+        "operationId": "deleteApiWishlistClear",
+        "parameters": null,
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Wishlist already empty",
+                      "success": "true"
+                    }
+                  },
+                  "Example2": {
+                    "value": {
+                      "message": "Wishlist cleared",
+                      "success": "true"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "204": {
+            "description": "Resource deleted successfully"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example1": {
+                    "value": {
+                      "message": "Unauthorized",
+                      "success": "false"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Response 401"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Delete ClearWishlist",
+        "tags": [
+          "Api"
+        ]
+      }
+    },
+    "/api/ws": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getApiWs",
+        "parameters": null,
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            },
+            "description": "Successful response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Get all backend/internal/websockets",
         "tags": [
           "Api"
         ]
@@ -17395,6 +18727,81 @@
         ]
       }
     },
+    "/assets/index-CJRmU3Ua.js": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getAssetsIndex-CJRmU3Ua.Js",
+        "parameters": [
+          {
+            "description": "Header Cache-Control",
+            "in": "header",
+            "name": "Cache-Control",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Get all func1",
+        "tags": [
+          "Assets"
+        ]
+      }
+    },
     "/assets/index-CNNVD4Sw.js": {
       "get": {
         "description": "Retrieve a list of resources with optional filtering and pagination",
@@ -18374,6 +19781,81 @@
       "get": {
         "description": "Retrieve a list of resources with optional filtering and pagination",
         "operationId": "getAssetsIndex-DZfbAn9z.Js",
+        "parameters": [
+          {
+            "description": "Header Cache-Control",
+            "in": "header",
+            "name": "Cache-Control",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Get all func1",
+        "tags": [
+          "Assets"
+        ]
+      }
+    },
+    "/assets/index-DjVG8GOT.css": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getAssetsIndex-DjVG8GOT.Css",
         "parameters": [
           {
             "description": "Header Cache-Control",
@@ -23910,6 +25392,81 @@
         ]
       }
     },
+    "/icon.png": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getIcon.Png",
+        "parameters": [
+          {
+            "description": "Header Cache-Control",
+            "in": "header",
+            "name": "Cache-Control",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Get all func1",
+        "tags": [
+          "Icon.png"
+        ]
+      }
+    },
     "/login": {
       "get": {
         "description": "Retrieve a list of resources with optional filtering and pagination",
@@ -24207,6 +25764,81 @@
         "summary": "Get all func1",
         "tags": [
           "Robots.txt"
+        ]
+      }
+    },
+    "/vite.svg": {
+      "get": {
+        "description": "Retrieve a list of resources with optional filtering and pagination",
+        "operationId": "getVite.Svg",
+        "parameters": [
+          {
+            "description": "Header Cache-Control",
+            "in": "header",
+            "name": "Cache-Control",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {},
+        "responses": {
+          "200": {
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Response 200"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized - Authentication required"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden - Insufficient permissions"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not found - Resource does not exist"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal server error"
+          }
+        },
+        "security": null,
+        "summary": "Get all func1",
+        "tags": [
+          "Vite.svg"
         ]
       }
     }

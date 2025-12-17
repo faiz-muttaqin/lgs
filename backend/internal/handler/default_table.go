@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/faiz-muttaqin/lgs/backend/internal/filter"
 	"github.com/faiz-muttaqin/lgs/backend/pkg/types"
 	"github.com/faiz-muttaqin/lgs/backend/pkg/util"
 	"github.com/gin-gonic/gin"
@@ -327,6 +328,224 @@ func GET_DEFAULT_TableDataHandler(db *gorm.DB, model interface{}, preload []stri
 			"recordsTotal":    totalRecords,
 			"recordsFiltered": filteredRecords,
 			"data":            data,
+		})
+	}
+}
+
+// Ensure this not coluumn name draw, start, length, sort, schema
+func GET_DEFAULT_TABLE(
+	db *gorm.DB,
+	model interface{},
+	preload []string,
+) gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		// =============================
+		// 🔹 Build schema dari struct
+		// =============================
+		schema := filter.BuildSchemaFromStruct(model)
+
+		// =============================
+		// 🔹 Expose schema ke UI
+		// =============================
+		if c.Query("schema") == "true" {
+			c.JSON(http.StatusOK, gin.H{
+				"schema": schema,
+			})
+			return
+		}
+
+		// =============================
+		// 🔹 DataTables params
+		// =============================
+		var req struct {
+			Draw   int    `form:"draw"`
+			Start  int    `form:"start"`
+			Length int    `form:"length"`
+			Sort   string `form:"sort"`
+			Fields string `form:"fields"`
+		}
+		_ = c.BindQuery(&req)
+
+		if req.Length <= 0 {
+			req.Length = 20
+		}
+		if req.Length > 2000 {
+			req.Length = 2000
+		}
+
+		// =============================
+		// 🔹 Base query + preload
+		// =============================
+		query := db.Model(model)
+		for _, p := range preload {
+			query = query.Preload(p)
+		}
+
+		// Track which fields to select
+		// var selectedFields []string
+		var selectedJSONKeys []string
+
+		if req.Fields != "" {
+			fields := strings.Split(req.Fields, ",")
+			dbColumns := []string{}
+
+			for _, f := range fields {
+				f = strings.TrimSpace(f)
+				fieldSchema, exists := schema[f]
+				if !exists {
+					c.JSON(http.StatusBadRequest, gin.H{
+						"success": false,
+						"error":   "Invalid field: " + f,
+					})
+					return
+				}
+				dbColumns = append(dbColumns, fieldSchema.DBColumn)
+				selectedJSONKeys = append(selectedJSONKeys, f)
+			}
+
+			// Always include ID for reference
+			if !util.Contains(dbColumns, "id") {
+				dbColumns = append([]string{"id"}, dbColumns...)
+				if !util.Contains(selectedJSONKeys, "id") {
+					selectedJSONKeys = append([]string{"id"}, selectedJSONKeys...)
+				}
+			}
+
+			// selectedFields = dbColumns
+			query = query.Select(dbColumns)
+		}
+
+		// =============================
+		// 🔹 Apply filtering DSL
+		// =============================
+		var err error
+		query, err = filter.ApplyQueryFilters(
+			query,
+			c.Request.URL.Query(),
+			schema,
+		)
+		if err != nil {
+			if filterErr, ok := err.(*filter.FilterError); ok {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"success": false,
+					"message": filterErr.Message,
+					"error":   filterErr,
+				})
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"success": false,
+					"message": err.Error(),
+					"error":   err.Error(),
+				})
+			}
+			return
+		}
+
+		// sort=-created_at  [desc created_at] | sort=created_at,name [asc created_at, asc name]
+		if req.Sort == "" {
+			req.Sort = "-id"
+		}
+		query, err = filter.ApplySorting(query, req.Sort, schema)
+		if err != nil {
+			if filterErr, ok := err.(*filter.FilterError); ok {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"success": false,
+					"message": filterErr.Message,
+					"error":   filterErr,
+				})
+			} else {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"success": false,
+					"message": err.Error(),
+					"error":   err.Error(),
+				})
+			}
+			return
+		}
+
+		// =============================
+		// 🔹 Count filtered
+		// =============================
+		var recordsFiltered int64
+		query.Count(&recordsFiltered)
+
+		// =============================
+		// 🔹 Pagination (DataTables)
+		// =============================
+		query = query.
+			Offset(req.Start).
+			Limit(req.Length)
+
+		// =============================
+		// 🔹 Execute
+		// =============================
+		results := reflect.New(
+			reflect.SliceOf(reflect.TypeOf(model).Elem()),
+		).Interface()
+
+		if err := query.Find(results).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   err.Error(),
+			})
+			return
+		}
+
+		// =============================
+		// 🔹 Total records (tanpa filter)
+		// =============================
+		var recordsTotal int64
+		db.Model(model).Count(&recordsTotal)
+
+		// =============================
+		// 🔹 Format response with field selection
+		// =============================
+		var responseData interface{}
+
+		if len(selectedJSONKeys) > 0 {
+			// Only return selected fields
+			t := reflect.TypeOf(model).Elem()
+			sliceValue := reflect.ValueOf(results).Elem()
+			data := make([]gin.H, 0, sliceValue.Len())
+
+			// Build map of JSON keys to field indices
+			fieldMap := make(map[string]int)
+			for i := 0; i < t.NumField(); i++ {
+				jsonTag := strings.Split(t.Field(i).Tag.Get("json"), ",")[0]
+				if jsonTag != "" && jsonTag != "-" {
+					fieldMap[jsonTag] = i
+				}
+			}
+
+			for i := 0; i < sliceValue.Len(); i++ {
+				row := sliceValue.Index(i)
+				rowData := gin.H{}
+
+				for _, jsonKey := range selectedJSONKeys {
+					if fieldIdx, exists := fieldMap[jsonKey]; exists {
+						fieldValue := row.Field(fieldIdx)
+						rowData[jsonKey] = fieldValue.Interface()
+					}
+				}
+
+				data = append(data, rowData)
+			}
+			responseData = data
+		} else {
+			// Return all fields, but clean up empty relations
+			responseData = cleanupEmptyRelations(results, preload)
+		}
+
+		// =============================
+		// 🔹 Response (DataTables)
+		// =============================
+		c.JSON(http.StatusOK, gin.H{
+			"success":         true,
+			"draw":            req.Draw,
+			"recordsTotal":    recordsTotal,
+			"recordsFiltered": recordsFiltered,
+			"data":            responseData,
 		})
 	}
 }
@@ -806,4 +1025,79 @@ func PATCH_DEFAULT_TableDataHandler(db *gorm.DB, model interface{}, preload []st
 			"data":          data,
 		})
 	}
+}
+
+// cleanupEmptyRelations removes unloaded relations (those with ID = 0) from the response
+func cleanupEmptyRelations(results interface{}, preloadedRelations []string) []gin.H {
+	sliceValue := reflect.ValueOf(results).Elem()
+	data := make([]gin.H, 0, sliceValue.Len())
+
+	// Build a map of preloaded relation names for quick lookup
+	preloadMap := make(map[string]bool)
+	for _, p := range preloadedRelations {
+		preloadMap[strings.ToLower(p)] = true
+	}
+
+	for i := 0; i < sliceValue.Len(); i++ {
+		item := sliceValue.Index(i)
+		itemType := item.Type()
+		rowData := gin.H{}
+
+		for j := 0; j < itemType.NumField(); j++ {
+			field := itemType.Field(j)
+			fieldValue := item.Field(j)
+
+			jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
+			if jsonTag == "" || jsonTag == "-" {
+				continue
+			}
+
+			// Check if this is a relation field (struct or slice of structs)
+			isRelation := false
+			fieldKind := fieldValue.Kind()
+
+			if fieldKind == reflect.Struct {
+				// Check if it's a time.Time or sql.NullXXX (not a relation)
+				fieldTypeName := fieldValue.Type().String()
+				if !strings.Contains(fieldTypeName, "time.Time") &&
+					!strings.Contains(fieldTypeName, "sql.Null") &&
+					!strings.Contains(fieldTypeName, "gorm.DeletedAt") {
+					isRelation = true
+				}
+			} else if fieldKind == reflect.Slice {
+				// Check if it's a slice of structs (relation)
+				if fieldValue.Type().Elem().Kind() == reflect.Struct {
+					isRelation = true
+				}
+			}
+
+			if isRelation {
+				// Check if this relation was preloaded
+				relationName := strings.ToLower(jsonTag)
+				if !preloadMap[relationName] {
+					// Not preloaded, check if it's empty
+					if fieldKind == reflect.Struct {
+						// For struct relations, check if ID field is 0
+						idField := fieldValue.FieldByName("ID")
+						if idField.IsValid() && idField.CanUint() && idField.Uint() == 0 {
+							// Empty relation, skip it
+							continue
+						}
+					} else if fieldKind == reflect.Slice {
+						// For slice relations, check if empty or nil
+						if fieldValue.Len() == 0 {
+							// Empty slice, skip it
+							continue
+						}
+					}
+				}
+			}
+
+			rowData[jsonTag] = fieldValue.Interface()
+		}
+
+		data = append(data, rowData)
+	}
+
+	return data
 }

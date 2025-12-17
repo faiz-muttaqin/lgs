@@ -51,9 +51,9 @@ func (SubCategory) TableName() string {
 
 // Shop represents the seller/shop information
 type Shop struct {
+	// ExternalID  string         `gorm:"column:external_id;size:100;unique" json:"external_id"`
 	ID          uint           `gorm:"primaryKey;column:id" json:"id"`
 	UserID      uint           `gorm:"column:user_id;unique;not null;index" json:"user_id" ui:"visible;filterable"`
-	ExternalID  string         `gorm:"column:external_id;size:100;unique" json:"external_id"`
 	Name        string         `gorm:"column:name;size:200;not null" json:"name" ui:"creatable;visible;editable;filterable;sortable"`
 	Slug        string         `gorm:"column:slug;size:200;unique;not null;index" json:"slug"`
 	Domain      string         `gorm:"column:domain;size:200" json:"domain"`
@@ -92,8 +92,8 @@ func generateShopSlug(name string) string {
 
 // Product represents the main product model
 type Product struct {
-	ID            uint           `gorm:"primaryKey;column:id" json:"id"`
-	ExternalID    string         `gorm:"column:external_id;size:100;unique" json:"external_id"`
+	ID            uint           `gorm:"primaryKey;column:id" json:"id" ui:"sortable,filterable"`
+	ExternalID    string         `gorm:"column:external_id;size:100" json:"external_id"`
 	SKU           string         `gorm:"column:sku;size:100;unique;index" json:"sku" ui:"creatable;visible;editable;filterable"`
 	Name          string         `gorm:"column:name;size:255;not null" json:"name" ui:"creatable;visible;editable;filterable;sortable"`
 	Slug          string         `gorm:"column:slug;size:255;unique;not null;index" json:"slug"`

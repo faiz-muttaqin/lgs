@@ -33,9 +33,6 @@ func Init() error {
 		if err := AutoMigrateDB(DB); err != nil {
 			logrus.Fatalf("Auto migrate database failed: %v", err)
 		}
-		if err := AutoMigrateDBProduct(DB); err != nil {
-			logrus.Fatalf("Auto migrate database failed: %v", err)
-		}
 	}()
 	return nil
 }

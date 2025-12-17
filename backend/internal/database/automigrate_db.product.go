@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 	"math/rand"
-	"time"
 
 	"github.com/faiz-muttaqin/lgs/backend/internal/model"
 	"github.com/faiz-muttaqin/lgs/backend/pkg/types"
@@ -308,11 +307,4 @@ func AutoMigrateDBProduct(db *gorm.DB) error {
 	}
 
 	return nil
-}
-
-// Helper function to create URL-friendly slugs
-func slugify(s string) string {
-	// Simple slugify: lowercase and replace spaces with hyphens
-	s = fmt.Sprintf("%s-%d", s, time.Now().UnixNano()%1000)
-	return s
 }

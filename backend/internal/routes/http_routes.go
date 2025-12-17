@@ -34,7 +34,8 @@ func Routes() {
 	r.DELETE("/themes", handler.DELETE_DEFAULT_TableDataHandler(database.DB, &model.Theme{}))
 
 	// Product endpoints - Public Read, Protected CUD
-	r.GET("/products", handler.GetProducts(database.DB))          // Public: Get all products with filters
+	r.GET("/products", handler.GET_DEFAULT_TABLE(database.DB, &model.Product{}, []string{"Shop"})) // Public: Get all products with filters
+	// r.GET("/products", handler.GetProducts(database.DB))          // Public: Get all products with filters
 	r.GET("/products/:id", handler.GetProductByID(database.DB))   // Public: Get single product
 	r.POST("/products", handler.CreateProduct(database.DB))       // Protected: Create product
 	r.PUT("/products/:id", handler.UpdateProduct(database.DB))    // Protected: Update product
@@ -42,19 +43,11 @@ func Routes() {
 	r.DELETE("/products/:id", handler.DeleteProduct(database.DB)) // Protected: Delete product
 
 	// Category endpoints - Public
-	r.GET("/categories", handler.GetCategories(database.DB))        // Get all categories
-	r.GET("/sub-categories", handler.GetSubCategories(database.DB)) // Get subcategories
-
-	// Shop endpoints - Public
-	r.GET("/shops", handler.GetShops(database.DB)) // Get all shops
-
-	// My Shop endpoints - Protected (User's own shop management)
-	r.GET("/my-shop", handler.GetMyShop(database.DB))                   // Get authenticated user's shop
-	r.POST("/my-shop", handler.CreateMyShop(database.DB))               // Create shop (upgrade to seller)
-	r.PUT("/my-shop", handler.UpdateMyShop(database.DB))                // Update user's shop
-	r.PATCH("/my-shop", handler.UpdateMyShop(database.DB))              // Update user's shop (alias)
-	r.GET("/my-shop/products", handler.GetMyShopProducts(database.DB))  // Get user's shop products
-	r.GET("/my-shop/check", handler.CheckShopAvailability(database.DB)) // Check if user can create shop
+	r.GET("/categories", handler.GET_DEFAULT_TABLE(database.DB, &model.Category{}, []string{}))                               // Get all categories
+	r.GET("/categories/sub-categories", handler.GET_DEFAULT_TABLE(database.DB, &model.Category{}, []string{"SubCategories"})) // Get all categories
+	r.GET("/sub-categories", handler.GET_DEFAULT_TABLE(database.DB, &model.SubCategory{}, []string{}))                        // Get subcategories
+	// r.GET("/categories", handler.GetCategories(database.DB))        // Get all categories
+	// r.GET("/sub-categories", handler.GetSubCategories(database.DB)) // Get subcategories
 
 	// Wishlist endpoints - Protected (User's wishlist for saved products)
 	r.GET("/my-wishlist", handler.GetMyWishlist(database.DB))          // Get user's wishlist
@@ -76,5 +69,18 @@ func Routes() {
 	r.DELETE("/messages/:id", handler.DeleteMessage(database.DB))             // Delete message (within 7 mins, not read)
 	r.GET("/messages/unread", handler.GetUnreadMessages(database.DB))         // Get all unread messages
 	r.GET("/messages/unread/count", handler.GetUnreadCount(database.DB))      // Get unread count
+
+	// Shop endpoints - Public
+	r.GET("/shops", handler.GET_DEFAULT_TABLE(database.DB, &model.Shop{}, []string{}))                    // Get all shops
+	r.GET("/shops/products", handler.GET_DEFAULT_TABLE(database.DB, &model.Shop{}, []string{"Products"})) // Get all shops
+	// r.GET("/shops", handler.GetShops(database.DB)) // Get all shops
+
+	// My Shop endpoints - Protected (User's own shop management)
+	r.GET("/my-shop", handler.GetMyShop(database.DB))                   // Get authenticated user's shop
+	r.POST("/my-shop", handler.CreateMyShop(database.DB))               // Create shop (upgrade to seller)
+	r.PUT("/my-shop", handler.UpdateMyShop(database.DB))                // Update user's shop
+	r.PATCH("/my-shop", handler.UpdateMyShop(database.DB))              // Update user's shop (alias)
+	r.GET("/my-shop/products", handler.GetMyShopProducts(database.DB))  // Get user's shop products
+	r.GET("/my-shop/check", handler.CheckShopAvailability(database.DB)) // Check if user can create shop
 
 }

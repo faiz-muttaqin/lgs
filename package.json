@@ -1,8 +1,8 @@
 {
-  "datetime": "2025-12-12 16:22:21",
+  "datetime": "2025-12-17 15:27:57",
   "name": "lucky-goods-store",
   "private": true,
-  "version": "0.0.30",
+  "version": "0.0.62",
   "type": "module",
   "scripts": {
     "dev": "vite",

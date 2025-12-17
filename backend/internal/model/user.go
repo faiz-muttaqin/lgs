@@ -15,7 +15,7 @@ import (
 
 type User struct {
 	ID                 uint           `gorm:"primaryKey;column:id" json:"id" ui:"sortable"`
-	ExternalID         string         `gorm:"column:external_id;size:200;unique" json:"external_id"` // Firebase ID
+	ExternalID         string         `gorm:"column:external_id;size:200" json:"external_id"` // Firebase ID
 	VerificationStatus string         `gorm:"column:verification_status;size:50" json:"verification_status"`
 	Avatar             types.Avatar   `gorm:"column:avatar;size:255" json:"avatar" ui:"visible;visibility;editable"`
 	Email              types.Email    `gorm:"column:email;size:100;unique" json:"email" ui:"creatable;visible;visibility;editable;filterable;sortable"`
