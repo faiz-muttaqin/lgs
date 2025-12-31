@@ -114,8 +114,8 @@ type Product struct {
 	CategoryID    uint           `gorm:"column:category_id;index" json:"category_id" ui:"creatable;editable;filterable;selection:/options?data=category"`
 	SubCategoryID uint           `gorm:"column:sub_category_id;index" json:"sub_category_id" ui:"creatable;editable;filterable;selection:/options?data=sub_category"`
 	ShopID        uint           `gorm:"column:shop_id;not null;index" json:"shop_id" ui:"creatable;editable;filterable;selection:/options?data=shop"`
-	CreatedAt     time.Time      `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt     time.Time      `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt     time.Time      `gorm:"column:created_at" json:"created_at" ui:"visible;sortable;filterable"`
+	UpdatedAt     time.Time      `gorm:"column:updated_at" json:"updated_at" ui:"visible;sortable;filterable"`
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 
 	// Relations
