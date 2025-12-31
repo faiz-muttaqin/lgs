@@ -16,22 +16,30 @@ export const ProductItem = ({ product }: ProductItemProps) => {
     }).format(price);
   };
 
+  // Handle both old mock data and new API data
+  const imageUrl = (product as any).image_url || (product as any).image;
+  const discount = (product as any).discount_pct || (product as any).discount;
+  const slashedPrice = (product as any).slashed_price || (product as any).originalPrice;
+  const location = (product as any).shop?.city || (product as any).location;
+  const reviews = (product as any).count_review || (product as any).reviews;
+  const badge = (product as any).is_featured ? 'Featured' : (product as any).badge;
+
   return (
-    <a href={`/product/${product.id}`} className="block">
+    <a href={`/products/${product.id}`} className="block">
       <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer min-w-[180px] max-w-[220px]">
         <div className="relative aspect-square bg-muted">
           <img
-            src={product.image}
+            src={imageUrl}
             alt={product.name}
             className="w-full h-full object-cover"
             onError={(e) => {
               e.currentTarget.src = 'https://via.placeholder.com/300x300?text=Product';
             }}
           />
-          {product.discount && <DiscountBadge discount={product.discount} />}
-          {product.badge && (
+          {discount && <DiscountBadge discount={discount} />}
+          {badge && (
             <div className="absolute top-2 right-2 bg-yellow-400 text-xs font-semibold px-2 py-1 rounded">
-              {product.badge}
+              {badge}
             </div>
           )}
         </div>
@@ -45,24 +53,24 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                 {formatPrice(product.price)}
               </span>
             </div>
-            {product.originalPrice && (
+            {slashedPrice && slashedPrice > product.price && (
               <span className="text-xs text-muted-foreground line-through">
-                {formatPrice(product.originalPrice)}
+                {formatPrice(slashedPrice)}
               </span>
             )}
             {product.rating && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                <span>{product.rating}</span>
-                {product.reviews && (
-                  <span className="text-muted-foreground/70">({product.reviews})</span>
+                <span>{product.rating.toFixed(1)}</span>
+                {reviews && (
+                  <span className="text-muted-foreground/70">({reviews})</span>
                 )}
               </div>
             )}
-            {product.location && (
+            {location && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <MapPin className="h-3 w-3" />
-                <span>{product.location}</span>
+                <span>{location}</span>
               </div>
             )}
           </div>

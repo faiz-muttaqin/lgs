@@ -87,7 +87,7 @@
   "info": {
     "description": "API Documentation for lucky-goods-store",
     "title": "lucky-goods-store",
-    "version": "0.0.66"
+    "version": "0.0.77"
   },
   "openapi": "3.0.4",
   "paths": {
@@ -15127,24 +15127,6 @@
         "operationId": "getApiUsers",
         "parameters": [
           {
-            "description": "Query columns[*][search][value] (dynamic parameter)",
-            "in": "",
-            "name": "columns[*][search][value]",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "Header Content-Type",
-            "in": "header",
-            "name": "Content-Type",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "description": "Header Content-Disposition",
             "in": "header",
             "name": "Content-Disposition",
@@ -15157,6 +15139,24 @@
             "description": "Query colKey (dynamic parameter)",
             "in": "",
             "name": "colKey",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Query columns[*][search][value] (dynamic parameter)",
+            "in": "",
+            "name": "columns[*][search][value]",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Header Content-Type",
+            "in": "header",
+            "name": "Content-Type",
             "required": false,
             "schema": {
               "type": "string"

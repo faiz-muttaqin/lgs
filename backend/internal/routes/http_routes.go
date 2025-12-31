@@ -34,8 +34,8 @@ func Routes() {
 	r.DELETE("/themes", handler.DELETE_DEFAULT_TableDataHandler(database.DB, &model.Theme{}))
 
 	// Product endpoints - Public Read, Protected CUD
-	r.GET("/products", handler.GET_DEFAULT_TABLE(database.DB, &model.Product{}, []string{"Shop"})) // Public: Get all products with filters
-	r.GET("/products/:id", handler.GetProductByID(database.DB))                                    // Public: Get single product
+	r.GET("/products", handler.GET_DEFAULT_TABLE(database.DB, &model.Product{}, []string{"Shop", "Category", "SubCategory", "Images", "Labels", "Badges"})) // Public: Get all products with filters
+	r.GET("/products/:id", handler.GetProductByID(database.DB))                                                                                             // Public: Get single product
 
 	r.POST("/products", handler.CreateProduct(database.DB))               // Protected: Create product
 	r.GET("/products/batch/template", handler.CreateProduct(database.DB)) // Protected: Create product

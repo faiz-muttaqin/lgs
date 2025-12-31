@@ -287,7 +287,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
               <ChevronDown className="size-4 shrink-0" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[300px] p-0" align="center">
+          <PopoverContent className="w-75 p-0" align="center">
             <Command className="h-100 w-full">
               <div className="flex w-full items-center">
                 <div className="flex w-full items-center border-b px-3 py-1">
@@ -308,7 +308,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 <ThemeControls />
               </div>
               <Separator />
-              <ScrollArea className="h-[500px] max-h-[70vh]">
+              <ScrollArea className="h-125 max-h-[70vh]">
                 <CommandEmpty>No themes found.</CommandEmpty>
 
                 {/* Saved Themes Group */}
@@ -341,7 +341,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                               applyThemePreset(presetName);
                               setSearch("");
                             }}
-                            className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
+                            className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
                           >
                             <ThemeColors presetName={presetName} mode={mode} />
                             <div className="flex flex-1 items-center gap-2">
@@ -388,7 +388,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                           applyThemePreset(presetName);
                           setSearch("");
                         }}
-                        className="data-[highlighted]:bg-secondary/50 flex items-center gap-2 py-2"
+                        className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
                       >
                         <ThemeColors presetName={presetName} mode={mode} />
                         <div className="flex flex-1 items-center gap-2">

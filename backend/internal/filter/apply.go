@@ -89,7 +89,7 @@ func ApplySorting(q *gorm.DB, sort string, schema map[string]FieldSchema) (*gorm
 			}
 		}
 
-		if !f.Sortable {
+		if !f.Sortable && s != "id" {
 			return nil, &FilterError{
 				Code:    ErrFieldNotSortable,
 				Message: fmt.Sprintf("Field '%s' is not sortable", s),

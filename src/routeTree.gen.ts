@@ -18,6 +18,7 @@ import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
 import { Route as errors403RouteImport } from './routes/(errors)/403'
 import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as ecommerceProductsRouteImport } from './routes/(ecommerce)/products'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
@@ -28,6 +29,7 @@ import { Route as EditorThemeRouteRouteImport } from './routes/editor/theme/rout
 import { Route as DashboardAuthenticatedRouteRouteImport } from './routes/dashboard/_authenticated/route'
 import { Route as EditorThemeIndexRouteImport } from './routes/editor/theme/index'
 import { Route as DashboardAuthenticatedIndexRouteImport } from './routes/dashboard/_authenticated/index'
+import { Route as ecommerceProductsProductIdRouteImport } from './routes/(ecommerce)/products/$productId'
 import { Route as DashboardAuthenticatedSettingsRouteRouteImport } from './routes/dashboard/_authenticated/settings/route'
 import { Route as DashboardAuthenticatedUsersIndexRouteImport } from './routes/dashboard/_authenticated/users/index'
 import { Route as DashboardAuthenticatedTasksIndexRouteImport } from './routes/dashboard/_authenticated/tasks/index'
@@ -82,6 +84,11 @@ const errors401Route = errors401RouteImport.update({
   path: '/401',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ecommerceProductsRoute = ecommerceProductsRouteImport.update({
+  id: '/(ecommerce)/products',
+  path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const authSignUpRoute = authSignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
@@ -132,6 +139,12 @@ const DashboardAuthenticatedIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => DashboardAuthenticatedRouteRoute,
+  } as any)
+const ecommerceProductsProductIdRoute =
+  ecommerceProductsProductIdRouteImport.update({
+    id: '/$productId',
+    path: '/$productId',
+    getParentRoute: () => ecommerceProductsRoute,
   } as any)
 const DashboardAuthenticatedSettingsRouteRoute =
   DashboardAuthenticatedSettingsRouteRouteImport.update({
@@ -216,12 +229,14 @@ export interface FileRoutesByFullPath {
   '/register': typeof authRegisterRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/products': typeof ecommerceProductsRouteWithChildren
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/dashboard/settings': typeof DashboardAuthenticatedSettingsRouteRouteWithChildren
+  '/products/$productId': typeof ecommerceProductsProductIdRoute
   '/dashboard/': typeof DashboardAuthenticatedIndexRoute
   '/editor/theme/': typeof EditorThemeIndexRoute
   '/dashboard/errors/$error': typeof DashboardAuthenticatedErrorsErrorRoute
@@ -245,11 +260,13 @@ export interface FileRoutesByTo {
   '/register': typeof authRegisterRoute
   '/sign-in': typeof authSignInRoute
   '/sign-up': typeof authSignUpRoute
+  '/products': typeof ecommerceProductsRouteWithChildren
   '/401': typeof errors401Route
   '/403': typeof errors403Route
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/products/$productId': typeof ecommerceProductsProductIdRoute
   '/editor/theme': typeof EditorThemeIndexRoute
   '/dashboard/errors/$error': typeof DashboardAuthenticatedErrorsErrorRoute
   '/dashboard/settings/account': typeof DashboardAuthenticatedSettingsAccountRoute
@@ -276,12 +293,14 @@ export interface FileRoutesById {
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/(ecommerce)/products': typeof ecommerceProductsRouteWithChildren
   '/(errors)/401': typeof errors401Route
   '/(errors)/403': typeof errors403Route
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/dashboard/_authenticated/settings': typeof DashboardAuthenticatedSettingsRouteRouteWithChildren
+  '/(ecommerce)/products/$productId': typeof ecommerceProductsProductIdRoute
   '/dashboard/_authenticated/': typeof DashboardAuthenticatedIndexRoute
   '/editor/theme/': typeof EditorThemeIndexRoute
   '/dashboard/_authenticated/errors/$error': typeof DashboardAuthenticatedErrorsErrorRoute
@@ -308,12 +327,14 @@ export interface FileRouteTypes {
     | '/register'
     | '/sign-in'
     | '/sign-up'
+    | '/products'
     | '/401'
     | '/403'
     | '/404'
     | '/500'
     | '/503'
     | '/dashboard/settings'
+    | '/products/$productId'
     | '/dashboard/'
     | '/editor/theme/'
     | '/dashboard/errors/$error'
@@ -337,11 +358,13 @@ export interface FileRouteTypes {
     | '/register'
     | '/sign-in'
     | '/sign-up'
+    | '/products'
     | '/401'
     | '/403'
     | '/404'
     | '/500'
     | '/503'
+    | '/products/$productId'
     | '/editor/theme'
     | '/dashboard/errors/$error'
     | '/dashboard/settings/account'
@@ -367,12 +390,14 @@ export interface FileRouteTypes {
     | '/(auth)/register'
     | '/(auth)/sign-in'
     | '/(auth)/sign-up'
+    | '/(ecommerce)/products'
     | '/(errors)/401'
     | '/(errors)/403'
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
     | '/dashboard/_authenticated/settings'
+    | '/(ecommerce)/products/$productId'
     | '/dashboard/_authenticated/'
     | '/editor/theme/'
     | '/dashboard/_authenticated/errors/$error'
@@ -393,6 +418,7 @@ export interface RootRouteChildren {
   authRouteRoute: typeof authRouteRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
   EditorThemeRouteRoute: typeof EditorThemeRouteRouteWithChildren
+  ecommerceProductsRoute: typeof ecommerceProductsRouteWithChildren
   errors401Route: typeof errors401Route
   errors403Route: typeof errors403Route
   errors404Route: typeof errors404Route
@@ -456,6 +482,13 @@ declare module '@tanstack/react-router' {
       path: '/401'
       fullPath: '/401'
       preLoaderRoute: typeof errors401RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(ecommerce)/products': {
+      id: '/(ecommerce)/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ecommerceProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/sign-up': {
@@ -527,6 +560,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardAuthenticatedIndexRouteImport
       parentRoute: typeof DashboardAuthenticatedRouteRoute
+    }
+    '/(ecommerce)/products/$productId': {
+      id: '/(ecommerce)/products/$productId'
+      path: '/$productId'
+      fullPath: '/products/$productId'
+      preLoaderRoute: typeof ecommerceProductsProductIdRouteImport
+      parentRoute: typeof ecommerceProductsRoute
     }
     '/dashboard/_authenticated/settings': {
       id: '/dashboard/_authenticated/settings'
@@ -722,11 +762,23 @@ const EditorThemeRouteRouteChildren: EditorThemeRouteRouteChildren = {
 const EditorThemeRouteRouteWithChildren =
   EditorThemeRouteRoute._addFileChildren(EditorThemeRouteRouteChildren)
 
+interface ecommerceProductsRouteChildren {
+  ecommerceProductsProductIdRoute: typeof ecommerceProductsProductIdRoute
+}
+
+const ecommerceProductsRouteChildren: ecommerceProductsRouteChildren = {
+  ecommerceProductsProductIdRoute: ecommerceProductsProductIdRoute,
+}
+
+const ecommerceProductsRouteWithChildren =
+  ecommerceProductsRoute._addFileChildren(ecommerceProductsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
   EditorThemeRouteRoute: EditorThemeRouteRouteWithChildren,
+  ecommerceProductsRoute: ecommerceProductsRouteWithChildren,
   errors401Route: errors401Route,
   errors403Route: errors403Route,
   errors404Route: errors404Route,

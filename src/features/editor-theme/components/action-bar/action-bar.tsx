@@ -14,7 +14,6 @@ function ActionBarContent() {
   const { 
     isCreatingTheme, 
     handleSaveClick, 
-    handleShareClick, 
     setCssImportOpen, 
     setCodePanelOpen 
   } = useDialogActions();
@@ -27,7 +26,6 @@ function ActionBarContent() {
           onCodeClick={() => setCodePanelOpen(true)}
           onSaveClick={() => handleSaveClick()}
           isSaving={isCreatingTheme}
-          onShareClick={handleShareClick}
         />
       </HorizontalScrollArea>
     </div>

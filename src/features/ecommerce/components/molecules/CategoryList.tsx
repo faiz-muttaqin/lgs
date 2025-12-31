@@ -5,8 +5,8 @@ import { ScrollButton } from '../atoms/ScrollButton';
 
 interface CategoryListProps {
   categories: Category[];
-  activeCategory?: string;
-  onCategoryClick?: (categoryId: string) => void;
+  activeCategory?: string | number;
+  onCategoryClick?: (categoryId: number) => void;
 }
 
 export const CategoryList = ({ categories, activeCategory, onCategoryClick }: CategoryListProps) => {
@@ -37,7 +37,7 @@ export const CategoryList = ({ categories, activeCategory, onCategoryClick }: Ca
           <CategoryBadge
             key={category.id}
             name={category.name}
-            isActive={activeCategory === category.id}
+            isActive={activeCategory === category.id || activeCategory === String(category.id)}
             onClick={() => onCategoryClick?.(category.id)}
           />
         ))}

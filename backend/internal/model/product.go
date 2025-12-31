@@ -9,7 +9,7 @@ import (
 
 // Category represents the main product category (e.g., "Dapur", "Elektronik")
 type Category struct {
-	ID          uint           `gorm:"primaryKey;column:id" json:"id"`
+	ID          uint           `gorm:"primaryKey;column:id" json:"id" ui:"visible;filterable;sortable"`
 	Name        string         `gorm:"column:name;size:100;unique;not null" json:"name" ui:"creatable;visible;editable;filterable;sortable"`
 	Slug        string         `gorm:"column:slug;size:100;unique;not null;index" json:"slug" ui:"visible;filterable"`
 	Description string         `gorm:"column:description;type:text" json:"description" ui:"creatable;visible;editable"`

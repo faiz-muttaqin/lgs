@@ -64,7 +64,7 @@ const DemoMail = lazy(() => import("@/components/examples/mail"));
 const DemoDashboard = lazy(() => import("@/components/examples/dashboard"));
 const DemoPricing = lazy(() => import("@/components/examples/pricing/pricing"));
 const TypographyDemo = lazy(() => import("@/components/examples/typography/typography-demo"));
-// const CustomDemo = lazy(() => import("@/components/examples/custom"));
+const ShadcnShowcase = lazy(() => import("@/components/examples/shadcn-showcase"));
 
 const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => {
   const { isFullscreen, toggleFullscreen } = useFullscreen();
@@ -192,15 +192,16 @@ const ThemePreviewPanel = ({ styles, currentMode }: ThemeEditorPreviewProps) => 
 
               <TabsContent value="components" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
-                  {/* <CustomDemo /> */}
-                  <h1>Component Will Show here </h1>
+                  <ScrollArea className="size-full">
+                    <ShadcnShowcase />
+                  </ScrollArea>
                 </ExamplesPreviewContainer>
               </TabsContent>
 
               <TabsContent value="dashboard" className="@container m-0 size-full">
                 <ExamplesPreviewContainer className="size-full">
                   <ScrollArea className="size-full">
-                    <div className="size-full min-w-[1400px]">
+                    <div className="size-full min-w-350">
                       <DemoDashboard />
                     </div>
                     <ScrollBar orientation="horizontal" />
