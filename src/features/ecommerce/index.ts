@@ -13,6 +13,3 @@ export type { Product, ProductDetail, ProductFilters, ProductListResponse, Categ
 // API
 export { productsApi } from './api/products';
 export { categoriesApi } from './api/categories';
-
-// Data
-export { mockProducts, categories, sections, mainBanners } from './data/mockData';
